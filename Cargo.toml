@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/icp_collateral_backend"
+]
+resolver = "2"

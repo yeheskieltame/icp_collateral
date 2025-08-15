@@ -1,0 +1,27 @@
+{
+  "canisters": {
+    "icp_collateral_backend": {
+      "candid": "src/icp_collateral_backend/icp_collateral_backend.did",
+      "package": "icp_collateral_backend",
+      "type": "rust"
+    },
+    "icp_collateral_frontend": {
+      "dependencies": [
+        "icp_collateral_backend"
+      ],
+      "source": [
+        "src/icp_collateral_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "icp_collateral_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
