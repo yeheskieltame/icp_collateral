@@ -14,6 +14,24 @@
       ],
       "type": "assets",
       "workspace": "icp_collateral_frontend"
+    },
+    "usdc_token": {
+      "candid": "src/mock_tokens/mock_tokens.did",
+      "package": "mock_tokens",
+      "type": "rust",
+      "init_arg": "(\"USD Coin\", \"USDC\", 6, 1000000000000)"
+    },
+    "weth_token": {
+      "candid": "src/mock_tokens/mock_tokens.did",
+      "package": "mock_tokens", 
+      "type": "rust",
+      "init_arg": "(\"Wrapped Ethereum\", \"WETH\", 18, 1000000000000000000000000)"
+    },
+    "wbtc_token": {
+      "candid": "src/mock_tokens/mock_tokens.did",
+      "package": "mock_tokens",
+      "type": "rust", 
+      "init_arg": "(\"Wrapped Bitcoin\", \"WBTC\", 8, 100000000000000)"
     }
   },
   "defaults": {

@@ -1,0 +1,57 @@
+type TokenAmount = nat;
+
+type TokenMetadata = record {
+  name: text;
+  symbol: text;
+  decimals: nat8;
+  total_supply: TokenAmount;
+};
+
+type TransferArgs = record {
+  to: principal;
+  amount: TokenAmount;
+};
+
+type TransferFromArgs = record {
+  from: principal;
+  to: principal;
+  amount: TokenAmount;
+};
+
+type ApproveArgs = record {
+  spender: principal;
+  amount: TokenAmount;
+};
+
+type TransferError = variant {
+  InsufficientBalance;
+  InsufficientAllowance;
+  Unauthorized;
+};
+
+type TransferResult = variant {
+  Ok: TokenAmount;
+  Err: TransferError;
+};
+
+service : (text, text, nat8, TokenAmount) -> {
+  // Standard ERC20-like functions
+  "name": () -> (text) query;
+  "symbol": () -> (text) query;
+  "decimals": () -> (nat8) query;
+  "total_supply": () -> (TokenAmount) query;
+  "balance_of": (principal) -> (TokenAmount) query;
+  "allowance": (principal, principal) -> (TokenAmount) query;
+  
+  "transfer": (TransferArgs) -> (TransferResult);
+  "transfer_from": (TransferFromArgs) -> (TransferResult);
+  "approve": (ApproveArgs) -> (TransferResult);
+  
+  // Testing functions
+  "mint": (principal, TokenAmount) -> (TransferResult);
+  "faucet": () -> (TransferResult);
+  
+  // Utility functions
+  "get_metadata": () -> (opt TokenMetadata) query;
+  "get_all_balances": () -> (vec record { principal; TokenAmount }) query;
+}
