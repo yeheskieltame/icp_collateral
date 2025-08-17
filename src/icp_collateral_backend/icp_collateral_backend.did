@@ -1,3 +1,107 @@
+type TokenType = variant {
+  USDC;
+  WETH;
+  WBTC;
+};
+
+type TokenInfo = record {
+  symbol: text;
+  decimals: nat8;
+  price_usd: nat;
+  is_collateral: bool;
+  collateral_factor: nat64;
+  liquidation_threshold: nat64;
+  liquidation_bonus: nat64;
+};
+
+type Position = record {
+  token_type: TokenType;
+  amount: nat;
+  is_collateral: bool;
+};
+
+type Account = record {
+  "principal": principal;
+  collateral_positions: vec record { TokenType; nat };
+  debt_positions: vec record { TokenType; nat };
+  locked_until: opt nat64;
+  last_interest_update: nat64;
+};
+
+type LiquidityPool = record {
+  token_type: TokenType;
+  total_liquidity: nat;
+  total_borrowed: nat;
+  interest_rate_bps: nat64;
+  utilization_rate_bps: nat64;
+  last_update: nat64;
+  cumulative_interest_index: nat;
+};
+
+type LockInfo = record {
+  amount: nat;
+  token_type: TokenType;
+  lock_duration: nat64;
+  unlock_time: nat64;
+  bonus_rate: nat64;
+};
+
+type Result = variant {
+  Ok: text;
+  Err: text;
+};
+
+type AccountResult = variant {
+  Ok: Account;
+  Err: text;
+};
+
+type PoolResult = variant {
+  Ok: LiquidityPool;
+  Err: text;
+};
+
+type TokenInfoResult = variant {
+  Ok: TokenInfo;
+  Err: text;
+};
+
+type HealthFactorResult = variant {
+  Ok: nat64;
+  Err: text;
+};
+
+type BorrowingPowerResult = variant {
+  Ok: nat;
+  Err: text;
+};
+
 service : {
-    "greet": (text) -> (text) query;
+  // Core lending functions
+  "supply_liquidity": (TokenType, nat) -> (Result);
+  "deposit_collateral": (TokenType, nat) -> (Result);
+  "borrow": (TokenType, nat) -> (Result);
+  "repay": (TokenType, nat) -> (Result);
+  "withdraw_collateral": (TokenType, nat) -> (Result);
+  
+  // Lock functions
+  "lock_tokens": (TokenType, nat, nat64) -> (Result);
+  
+  // Liquidation
+  "liquidate": (principal, TokenType, TokenType, nat) -> (Result);
+  
+  // Query functions
+  "get_account_info": (opt principal) -> (AccountResult) query;
+  "get_pool_info": (TokenType) -> (PoolResult) query;
+  "get_all_pools": () -> (vec LiquidityPool) query;
+  "get_token_info": (TokenType) -> (TokenInfoResult) query;
+  "get_all_tokens": () -> (vec record { TokenType; TokenInfo }) query;
+  "get_user_health_factor": (opt principal) -> (HealthFactorResult) query;
+  "get_borrowing_power": (opt principal) -> (BorrowingPowerResult) query;
+  "get_lock_positions": (opt principal) -> (vec LockInfo) query;
+  
+  // Admin functions
+  "update_token_price": (TokenType, nat) -> (Result);
+  "pause_contract": () -> (Result);
+  "unpause_contract": () -> (Result);
 }
